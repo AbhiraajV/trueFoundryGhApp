@@ -6,7 +6,7 @@
 
 ## Backend
     Make sure you have docker installed
-    I've left my credentials for CloudAMQP so that you dont have to create on
+    I've left my credentials for CloudAMQP so that you dont have to create one yourself
 
 - cd server
 
