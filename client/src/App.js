@@ -17,6 +17,15 @@ function App() {
             >
               Click here to allow us to create a repo for you
             </a>
+            <br />
+            <button
+              onClick={() => {
+                localStorage.removeItem("user");
+                window.location.reload();
+              }}
+            >
+              Logout
+            </button>
           </b>
         ) : (
           <BasicLogin />
