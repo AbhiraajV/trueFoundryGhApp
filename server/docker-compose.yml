@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+
+  emailservice:
+    build: 
+      dockerfile: Dockerfile
+      context: ./MailService
+    ports:
+      - "8082:8082"
+    restart: always
+    volumes:
+      - /app/emailservice/node_modules
+
+  githubapi:
+    build: 
+      dockerfile: Dockerfile
+      context: ./GithubAPI
+    ports:
+      - "8081:8081"
+    restart: always
+    volumes:
+      - .:/app
+      - /app/githubapi/node_modules
+
+  userapi:
+    build:
+      dockerfile: Dockerfile
+      context: ./user
+    ports:
+      - "8080:8080"
+    restart: always
+    volumes:
+      - /app/userapi/node_modules
+  
+  nginx-proxy:
+    build: 
+      dockerfile: Dockerfile
+      context: ./proxy
+    depends_on:
+      - githubapi
+      - emailservice
+      - userapi
+    ports:
+      - "80:80"

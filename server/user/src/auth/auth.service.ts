@@ -7,7 +7,7 @@ import {
   GhCredsDto,
   LoginDto,
 } from './dto';
-import * as argon from 'argon2';
+import * as bcrypt from 'bcryptjs';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -25,7 +25,8 @@ export class AuthService {
   async signup(input: AuthDto) {
     try {
       // create hash password
-      const hashedPassword = await argon.hash(input.password);
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hashSync(input.password, salt);
       // create user
       const user = await this.prisma.user.create({
         data: { ...input, password: hashedPassword },
@@ -50,7 +51,7 @@ export class AuthService {
 
     if (!user) throw new ForbiddenException('Credentials Incorrect');
 
-    const pswdMatches = await argon.verify(user.password, dto.password);
+    const pswdMatches = await bcrypt.compareSync(user.password, dto.password);
 
     if (!pswdMatches) throw new ForbiddenException('Credentials Incorrect');
     return { token: await this.signToken(user.id, user.email), user };
